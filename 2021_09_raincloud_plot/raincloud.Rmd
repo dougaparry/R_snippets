@@ -1,0 +1,14 @@
+---
+title: "Raincloud plot in R"
+author: "Douglas A. Parry"
+date: "03/09/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+rm(list = ls())
+options(scipen = 999)
+set.seed(42)
+```
