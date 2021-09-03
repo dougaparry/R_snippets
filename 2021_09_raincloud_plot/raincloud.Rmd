@@ -12,3 +12,43 @@ rm(list = ls())
 options(scipen = 999)
 set.seed(42)
 ```
+
+```{r load-libraries}
+if (!require("pacman")) install.packages("pacman");
+library(pacman)
+pacman::p_load(tidyverse, dplyr, ggplot2, ggtext, showtext, ggdist)
+```
+
+```{r load-data}
+lemurs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-08-24/lemur_data.csv')
+
+showtext_auto()
+```
+
+```{r view-data}
+head(lemurs)
+```
+
+```{r data-prep}
+lemurs_unique <- lemurs %>% 
+  distinct(dlc_id, .keep_all = T) # dlc_id identifies a single lemur
+
+lemurs_clean <- lemurs_unique %>% 
+  select(dlc_id, sex, birth_type, age_at_death_y) %>% 
+  drop_na(age_at_death_y) %>% 
+  filter(birth_type %in% c("CB", "WB"), # removed lemurs with non-defined birth-place
+         sex %in% c("M", "F")) %>% 
+  mutate(sex = case_when(
+           sex == "M" ~ "Male",
+           sex == "F" ~ "Female"),
+         birth_type = case_when(
+           birth_type == "CB" ~ "captivity",
+           birth_type == "WB" ~ "the wild"),
+         label = paste(sex, "born\nin", birth_type))
+
+lemurs_clean$label = factor(lemurs_clean$label, levels = c("Male born\nin captivity",
+                                                           "Female born\nin captivity",
+                                                           "Male born\nin the wild",
+                                                           "Female born\nin the wild"))
+```
+
